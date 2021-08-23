@@ -2,7 +2,13 @@ import { useField } from 'formik'
 
 import FormError from './formError'
 
-const TextField = ({ label, className, icon: Icon, ...props }) => {
+const TextField = ({
+  label,
+  className,
+  icon: Icon,
+  isOptional = false,
+  ...props
+}) => {
   const [field, meta] = useField(props)
 
   let inputStyle = [
@@ -12,12 +18,19 @@ const TextField = ({ label, className, icon: Icon, ...props }) => {
 
   return (
     <div className={className}>
-      <label
-        className="block text-sm font-medium text-gray-500"
-        htmlFor={props.id || props.name}
-      >
-        {label}
-      </label>
+      <div className="flex justify-between">
+        <label
+          className="block text-sm font-medium text-gray-500"
+          htmlFor={props.id || props.name}
+        >
+          {label}
+        </label>
+        {isOptional && (
+          <span className="text-sm text-gray-400" id="email-optional">
+            Optional
+          </span>
+        )}
+      </div>
       <div className="mt-1 relative rounded-md shadow-sm">
         {Icon && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

@@ -1,19 +1,54 @@
-import AppRadioGroup from '../components/common/appRadioGroup'
-import Header1 from '../components/common/header1'
 import * as yup from 'yup'
 
+import AppRadioGroup from '../components/common/appRadioGroup'
+import Header1 from '../components/common/header1'
+import Header2 from '../components/common/header2'
+import AppSwitch from '../components/common/appSwitch'
+import Description from '../components/description'
 import Wizard from '../components/wizard'
 import FormikValue from '../components/formikValue'
 import AppTextInput from '../components/appTextInput'
 
-import { Lightbulb, Bed, Straighten } from '../components/icons'
+import {
+  Lightbulb,
+  Bed,
+  Straighten,
+  House,
+  Apartment
+} from '../components/icons'
+import { useFormikContext } from 'formik'
+
+import _ from 'lodash'
+import { useState } from 'react'
 
 const steps = ['Type', 'Location', 'General', 'Financial', 'Day-to-Day']
-const types = [{ name: 'House' }, { name: 'Apartment' }, { name: 'Studio' }]
+const types = [
+  { name: 'House', icon: (className) => <House className={className} /> },
+  {
+    name: 'Apartment',
+    icon: (className) => <Apartment className={className} />
+  },
+  { name: 'Studio', icon: (className) => <Bed className={className} /> }
+]
 
 const WizardStep = ({ children }) => children
 
+const TotalPropertyPrice = () => {
+  const { values } = useFormikContext()
+  const total = _.sum([
+    values.pruchasePrice,
+    values.closingCosts,
+    values.transactionTaxes,
+    values.renovationCosts
+  ])
+
+  return <Description label="Total price" value={total ? total : '0'} />
+}
+
 export default function Home() {
+  //TODO: Remove it
+  const [enabled, setEnabled] = useState(false)
+
   return (
     <>
       <Wizard
@@ -41,7 +76,7 @@ export default function Home() {
             propertyType: yup.string().required().label('Property type')
           })}
         >
-          <Header1>The property is a...</Header1>
+          <Header1>The property is a(n)...</Header1>
           <AppRadioGroup name="propertyType" items={types} />
         </WizardStep>
 
@@ -111,7 +146,11 @@ export default function Home() {
             energyLabel: yup.string().required().label('Surface')
           })}
         >
-          <Header1>General information</Header1>
+          <Header1>
+            <FormikValue valueOf="street" />{' '}
+            <FormikValue valueOf="houseNumber" />,{' '}
+            <FormikValue valueOf="city" /> - General information
+          </Header1>
 
           <div className="my-10 max-w-3xl grid gap-4 grid-cols-6">
             <AppTextInput
@@ -154,15 +193,16 @@ export default function Home() {
               .min(0)
               .required()
               .label('Purchase price'),
-            closingCosts: yup.number().min(0).required().label('Closing costs'),
-            transactionTaxes: yup
-              .number()
-              .required()
-              .label('Transaction taxes'),
-            renovationCosts: yup.string().required().label('Rennovation costs')
+            closingCosts: yup.number().min(0).label('Closing costs'),
+            transactionTaxes: yup.number().label('Transaction taxes'),
+            renovationCosts: yup.string().label('Rennovation costs')
           })}
         >
-          <Header1>Purchase information</Header1>
+          <Header1>
+            <FormikValue valueOf="street" />{' '}
+            <FormikValue valueOf="houseNumber" />,{' '}
+            <FormikValue valueOf="city" /> - Purchase information
+          </Header1>
 
           <div className="my-10 max-w-3xl grid gap-4 grid-cols-6">
             <AppTextInput
@@ -171,6 +211,7 @@ export default function Home() {
               name="acquireDate"
               type="date"
             />
+            <Header2 className="col-span-6 mt-5">Price breakdown</Header2>
             <AppTextInput
               className="col-start-1 col-span-3"
               label="Purchase price"
@@ -178,22 +219,34 @@ export default function Home() {
               type="number"
             />
             <AppTextInput
+              isOptional
               className="col-span-3"
-              label="Sufrace in m2"
+              label="Closing costs"
               name="closingCosts"
               type="number"
             />
             <AppTextInput
+              isOptional
               className="col-span-3"
               label="Transaction taxes"
               name="transactionTaxes"
               type="number"
             />
             <AppTextInput
+              isOptional
               className="col-span-3"
               label="Rennovation costs"
               name="renovationCosts"
               type="number"
+            />
+            <TotalPropertyPrice />
+
+            <Header2 className="col-span-6 mt-5">Property financing</Header2>
+            <AppSwitch
+              className="col-span-6"
+              enabled={enabled}
+              setEnabled={setEnabled}
+              label="Property is financed with loan"
             />
           </div>
         </WizardStep>

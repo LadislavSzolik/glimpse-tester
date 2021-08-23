@@ -51,12 +51,12 @@ const AppRadioGroup = ({ name, items }) => {
                   <span className="rounded-full bg-white w-1.5 h-1.5" />
                 </span>
                 <div className="ml-3 flex flex-row items-center">
-                  <House className="h-6 w-6 text-gray-400 mr-2" />
+                  {item.icon && item.icon('h-6 w-6 text-gray-400 mr-2')}
                   <RadioGroup.Label
                     as="span"
                     className={classNames(
                       checked ? 'text-indigo-900' : 'text-gray-900',
-                      'block text-sm font-medium'
+                      'block font-medium'
                     )}
                   >
                     {item.name}
