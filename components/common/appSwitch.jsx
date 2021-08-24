@@ -1,44 +1,37 @@
-import { Switch } from '@headlessui/react'
+import { Switch } from '@headlessui/react';
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
-export default function Example({ enabled, setEnabled, className, label }) {
+export default function AppSwitch({ value, onChange, className, label }) {
   return (
-    <Switch.Group
-      as="div"
-      className={classNames('flex items-center gap-4', className)}
-    >
+    <Switch.Group as="div" className={classNames('flex items-center gap-4', className)}>
       <Switch
-        checked={enabled}
-        onChange={setEnabled}
+        checked={value}
+        onChange={onChange}
         className={classNames(
-          enabled ? 'bg-indigo-600' : 'bg-gray-200',
+          value ? 'bg-indigo-600' : 'bg-gray-200',
           'relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
         )}
       >
         <span className="sr-only">Use setting</span>
         <span
           className={classNames(
-            enabled ? 'translate-x-5' : 'translate-x-0',
+            value ? 'translate-x-5' : 'translate-x-0',
             'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
           )}
         >
           <span
             className={classNames(
-              enabled
+              value
                 ? 'opacity-0 ease-out duration-100'
                 : 'opacity-100 ease-in duration-200',
               'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
             )}
             aria-hidden="true"
           >
-            <svg
-              className="h-3 w-3 text-gray-400"
-              fill="none"
-              viewBox="0 0 12 12"
-            >
+            <svg className="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 12 12">
               <path
                 d="M4 8l2-2m0 0l2-2M6 6L4 4m2 2l2 2"
                 stroke="currentColor"
@@ -50,7 +43,7 @@ export default function Example({ enabled, setEnabled, className, label }) {
           </span>
           <span
             className={classNames(
-              enabled
+              value
                 ? 'opacity-100 ease-in duration-200'
                 : 'opacity-0 ease-out duration-100',
               'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity'
@@ -71,5 +64,5 @@ export default function Example({ enabled, setEnabled, className, label }) {
         {label}
       </Switch.Label>
     </Switch.Group>
-  )
+  );
 }

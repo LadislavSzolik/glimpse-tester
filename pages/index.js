@@ -1,54 +1,46 @@
-import * as yup from 'yup'
+import { useState } from 'react';
+import * as yup from 'yup';
 
-import AppRadioGroup from '../components/common/appRadioGroup'
-import Header1 from '../components/common/header1'
-import Header2 from '../components/common/header2'
-import AppSwitch from '../components/common/appSwitch'
-import Description from '../components/description'
-import Wizard from '../components/wizard'
-import FormikValue from '../components/formikValue'
-import AppTextInput from '../components/appTextInput'
+import AppRadioGroup from '../components/common/appRadioGroup';
+import Header1 from '../components/common/header1';
+import Header2 from '../components/common/header2';
+import AppSwitch from '../components/common/appSwitch';
+import Description from '../components/description';
+import Wizard from '../components/wizard';
+import FormikValue from '../components/formikValue';
+import AppTextInput from '../components/appTextInput';
 
-import {
-  Lightbulb,
-  Bed,
-  Straighten,
-  House,
-  Apartment
-} from '../components/icons'
-import { useFormikContext } from 'formik'
+import { Lightbulb, Bed, Straighten, House, Apartment } from '../components/icons';
+import { useField, useFormikContext } from 'formik';
 
-import _ from 'lodash'
-import { useState } from 'react'
+import _ from 'lodash';
+import Header3 from '../components/common/header3';
 
-const steps = ['Type', 'Location', 'General', 'Financial', 'Day-to-Day']
+const steps = ['Type', 'Location', 'General', 'Financial', 'Day-to-Day'];
 const types = [
   { name: 'House', icon: (className) => <House className={className} /> },
   {
     name: 'Apartment',
-    icon: (className) => <Apartment className={className} />
+    icon: (className) => <Apartment className={className} />,
   },
-  { name: 'Studio', icon: (className) => <Bed className={className} /> }
-]
+  { name: 'Studio', icon: (className) => <Bed className={className} /> },
+];
 
-const WizardStep = ({ children }) => children
+const WizardStep = ({ children }) => children;
 
 const TotalPropertyPrice = () => {
-  const { values } = useFormikContext()
+  const { values } = useFormikContext();
   const total = _.sum([
     values.pruchasePrice,
     values.closingCosts,
     values.transactionTaxes,
-    values.renovationCosts
-  ])
+    values.renovationCosts,
+  ]);
 
-  return <Description label="Total price" value={total ? total : '0'} />
-}
+  return <Description label="Total price" value={total ? total : '0'} />;
+};
 
 export default function Home() {
-  //TODO: Remove it
-  const [enabled, setEnabled] = useState(false)
-
   return (
     <>
       <Wizard
@@ -62,7 +54,18 @@ export default function Home() {
           constructionYear: '',
           surface: '',
           bedrooms: '',
-          energyLabel: ''
+          energyLabel: '',
+          acquireDate: '',
+          pruchasePrice: '',
+          closingCosts: '',
+          transactionTaxes: '',
+          renovationCosts: '',
+          addLoan: '',
+          downPayment: '',
+          loanAmount: '',
+          loanAnnualInterestRate: '',
+          loanStartDate: '',
+          loanTerm: '',
         }}
         onSubmit={async (values) =>
           sleep(300).then(() => console.log('Wizard submit', values))
@@ -73,7 +76,7 @@ export default function Home() {
         <WizardStep
           onSubmit={() => console.log('Step1 onSubmit')}
           validationSchema={yup.object({
-            propertyType: yup.string().required().label('Property type')
+            propertyType: yup.string().required().label('Property type'),
           })}
         >
           <Header1>The property is a(n)...</Header1>
@@ -88,7 +91,7 @@ export default function Home() {
             houseNumber: yup.number().required().label('House number'),
             postCode: yup.number().required().label('Postcode'),
             city: yup.string().required().label('City'),
-            country: yup.string().required().label('Country')
+            country: yup.string().required().label('Country'),
           })}
         >
           <Header1>
@@ -113,12 +116,7 @@ export default function Home() {
               name="postCode"
               type="number"
             />
-            <AppTextInput
-              className="col-span-3"
-              label="City"
-              name="city"
-              type="text"
-            />
+            <AppTextInput className="col-span-3" label="City" name="city" type="text" />
             <AppTextInput
               className="col-span-3"
               label="Country"
@@ -132,23 +130,14 @@ export default function Home() {
         <WizardStep
           onSubmit={() => console.log('Step1 onSubmit')}
           validationSchema={yup.object({
-            constructionYear: yup
-              .date()
-              .min(1800)
-              .required()
-              .label('Construction year'),
+            constructionYear: yup.date().min(1800).required().label('Construction year'),
             surface: yup.number().min(0).required().label('Surface'),
-            bedrooms: yup
-              .number()
-              .min(0)
-              .required()
-              .label('Number of bedrooms'),
-            energyLabel: yup.string().required().label('Surface')
+            bedrooms: yup.number().min(0).required().label('Number of bedrooms'),
+            energyLabel: yup.string().required().label('Surface'),
           })}
         >
           <Header1>
-            <FormikValue valueOf="street" />{' '}
-            <FormikValue valueOf="houseNumber" />,{' '}
+            <FormikValue valueOf="street" /> <FormikValue valueOf="houseNumber" />,{' '}
             <FormikValue valueOf="city" /> - General information
           </Header1>
 
@@ -187,20 +176,24 @@ export default function Home() {
         <WizardStep
           onSubmit={() => console.log('Step1 onSubmit')}
           validationSchema={yup.object({
-            acquireDate: yup.date().min(1800).required().label('Acquired on'),
-            pruchasePrice: yup
-              .number()
-              .min(0)
-              .required()
-              .label('Purchase price'),
+            acquireDate: yup.date().required().label('Acquired on'),
+            pruchasePrice: yup.number().required().label('Purchase price'),
             closingCosts: yup.number().min(0).label('Closing costs'),
             transactionTaxes: yup.number().label('Transaction taxes'),
-            renovationCosts: yup.string().label('Rennovation costs')
+            renovationCosts: yup.string().label('Rennovation costs'),
+            addLoan: yup.boolean(),
+            downPayment: yup
+              .number()
+              .label('Down payment')
+              .when('addLoan', { is: true, then: yup.number().required() }),
+            loanAmount: yup.number().required().label('Loan Amount'),
+            loanAnnualInterestRate: yup.number().required().label('Annual interest rate'),
+            loanStartDate: yup.date().required().label('Loan start'),
+            loanTerm: yup.number().required().label('Loan term'),
           })}
         >
           <Header1>
-            <FormikValue valueOf="street" />{' '}
-            <FormikValue valueOf="houseNumber" />,{' '}
+            <FormikValue valueOf="street" /> <FormikValue valueOf="houseNumber" />,{' '}
             <FormikValue valueOf="city" /> - Purchase information
           </Header1>
 
@@ -212,6 +205,7 @@ export default function Home() {
               type="date"
             />
             <Header2 className="col-span-6 mt-5">Price breakdown</Header2>
+
             <AppTextInput
               className="col-start-1 col-span-3"
               label="Purchase price"
@@ -239,18 +233,74 @@ export default function Home() {
               name="renovationCosts"
               type="number"
             />
+
             <TotalPropertyPrice />
 
             <Header2 className="col-span-6 mt-5">Property financing</Header2>
-            <AppSwitch
+
+            <FormSwitch
+              name="addLoan"
               className="col-span-6"
-              enabled={enabled}
-              setEnabled={setEnabled}
               label="Property is financed with loan"
             />
+
+            <FormLoanInput />
           </div>
         </WizardStep>
       </Wizard>
     </>
-  )
+  );
 }
+
+const FormSwitch = ({ className, label, name }) => {
+  const [field, meta, helpers] = useField(name);
+
+  const { value } = meta;
+  const { setValue } = helpers;
+  return (
+    <AppSwitch value={value} onChange={setValue} className={className} label={label} />
+  );
+};
+
+const FormLoanInput = () => {
+  const formik = useFormikContext();
+
+  if (!formik.values.addLoan) return null;
+
+  return (
+    <>
+      <Header3 className="col-span-6 mt-5">Down payment</Header3>
+      <AppTextInput
+        className="col-span-3"
+        label="Down payment"
+        name="downPayment"
+        type="number"
+      />
+      <Header3 className="col-span-6 mt-5">Loan information</Header3>
+      <AppTextInput
+        className="col-span-3"
+        label="Loan amount"
+        name="loanAmount"
+        type="number"
+      />
+      <AppTextInput
+        className="col-span-3"
+        label="Annual interest rate"
+        name="loanAnnualInterestRate"
+        type="number"
+      />
+      <AppTextInput
+        className="col-span-3"
+        label="Loan start date"
+        name="loanStartDate"
+        type="date"
+      />
+      <AppTextInput
+        className="col-span-3"
+        label="Loan start date"
+        name="loanTerm"
+        type="number"
+      />
+    </>
+  );
+};

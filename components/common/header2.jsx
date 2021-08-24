@@ -1,16 +1,16 @@
-import React from 'react'
+import React from 'react';
 
-const Header1 = ({ children, className }) => {
+const Header2 = ({ children, className }) => {
   return (
     <h2
       className={[
-        'text-lg font-medium leading-6 text-gray-900',
-        className
+        'text-xl font-medium leading-6 text-gray-900',
+        className,
       ].join(' ')}
     >
       {children}
     </h2>
-  )
-}
+  );
+};
 
-export default Header1
+export default Header2;
